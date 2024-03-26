@@ -10,7 +10,7 @@ data_preprocessor = dict(size=crop_size)
 model = dict(
     data_preprocessor=data_preprocessor,
     backbone=dict(init_cfg=dict(type='Pretrained', checkpoint=checkpoint)),
-    decode_head=dict(
+    decode_head=dict(  # TAG: 解码头配置
         type='APFormerHead2', #'APFormerHeadSingle' #FeedFormerHeadUNet, FeedFormerHeadUNetPlus, FeedFormerHead32, FeedFormerHead32_new'
         feature_strides=[4, 8, 16, 32],
         in_channels=[32, 64, 160, 256],

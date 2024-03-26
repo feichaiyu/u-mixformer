@@ -66,8 +66,18 @@ class CatKey(nn.Module):
         super().__init__()
         self.pool_ratio = pool_ratio
         self.sr_list = nn.ModuleList([nn.Conv2d(dim[i], dim[i], kernel_size=1, stride=1) for i in range(len(self.pool_ratio)) if self.pool_ratio[i] > 1])
+        # ModuleList(
+        # (0): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1))
+        # (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        # (2): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1))
+        # )
         self.pool_list = nn.ModuleList([nn.AvgPool2d(self.pool_ratio[i], self.pool_ratio[i], ceil_mode=True) for i in range(len(self.pool_ratio)) if self.pool_ratio[i] > 1])
-
+        # ModuleList(
+        # (0): AvgPool2d(kernel_size=2, stride=2, padding=0)
+        # (1): AvgPool2d(kernel_size=4, stride=4, padding=0)
+        # (2): AvgPool2d(kernel_size=8, stride=8, padding=0)
+        # )
+        
     def forward(self, x):
         out_list = []
         cnt = 0
@@ -77,7 +87,7 @@ class CatKey(nn.Module):
                 cnt += 1
             else:
                 out_list.append(x[i])
-        return torch.cat(out_list, dim=1)
+        return torch.cat(out_list, dim=1)  # pool后，特征大小一致，直接cat。特征图均为1/32大小
 
 class CatKeyMulti(nn.Module):
     def __init__(self, pool_ratio=[1,2,4,8], dim=[256,160,64,32], num_feat = 4):
@@ -295,7 +305,7 @@ class APFormerHead(BaseDecodeHead):
         return x
     
 @MODELS.register_module()
-class APFormerHead2(BaseDecodeHead):
+class APFormerHead2(BaseDecodeHead):  # TAG: 解码头
     """
     Attention-Pooling Former
     """
